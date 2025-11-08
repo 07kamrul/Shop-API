@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "NdrZ5JRSsnY=",
+  "success": true,
+  "projectFilePath": "/Users/07kamrul/Developer/backend/shop_management/shop_management/shop_management.csproj",
+  "expectedPackageFiles": [
+    "/Users/07kamrul/.nuget/packages/microsoft.aspnetcore.openapi/9.0.2/microsoft.aspnetcore.openapi.9.0.2.nupkg.sha512",
+    "/Users/07kamrul/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
