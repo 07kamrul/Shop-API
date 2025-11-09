@@ -1,0 +1,104 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|c:\\users\\kamrul\\source\\repos\\shopmanagement\\shopmanagement\\data\\repositories\\producthistoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|solutionrelative:shopmanagement\\data\\repositories\\producthistoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|c:\\users\\kamrul\\source\\repos\\shopmanagement\\shopmanagement\\data\\repositories\\supplierrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|solutionrelative:shopmanagement\\data\\repositories\\supplierrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|c:\\users\\kamrul\\source\\repos\\shopmanagement\\shopmanagement\\data\\repositories\\customerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|solutionrelative:shopmanagement\\data\\repositories\\customerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|c:\\users\\kamrul\\source\\repos\\shopmanagement\\shopmanagement\\data\\repositories\\salerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4B7B828D-9194-4651-A791-B2623138B9A5}|ShopManagement\\ShopManagement.csproj|solutionrelative:shopmanagement\\data\\repositories\\salerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3fd5e0cc-709a-4f8c-94c3-7f0f8dff5bb2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{13b12e3e-c1b4-4539-9371-4fe9a0d523fc}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProductHistoryRepository.cs",
+              "DocumentMoniker": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\ProductHistoryRepository.cs",
+              "RelativeDocumentMoniker": "ShopManagement\\Data\\Repositories\\ProductHistoryRepository.cs",
+              "ToolTip": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\ProductHistoryRepository.cs",
+              "RelativeToolTip": "ShopManagement\\Data\\Repositories\\ProductHistoryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-09T14:42:18.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SupplierRepository.cs",
+              "DocumentMoniker": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\SupplierRepository.cs",
+              "RelativeDocumentMoniker": "ShopManagement\\Data\\Repositories\\SupplierRepository.cs",
+              "ToolTip": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\SupplierRepository.cs",
+              "RelativeToolTip": "ShopManagement\\Data\\Repositories\\SupplierRepository.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAA5wCgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-09T14:40:15.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CustomerRepository.cs",
+              "DocumentMoniker": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\CustomerRepository.cs",
+              "RelativeDocumentMoniker": "ShopManagement\\Data\\Repositories\\CustomerRepository.cs",
+              "ToolTip": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\CustomerRepository.cs",
+              "RelativeToolTip": "ShopManagement\\Data\\Repositories\\CustomerRepository.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAowDMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-09T14:39:53.787Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SaleRepository.cs",
+              "DocumentMoniker": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\SaleRepository.cs",
+              "RelativeDocumentMoniker": "ShopManagement\\Data\\Repositories\\SaleRepository.cs",
+              "ToolTip": "C:\\Users\\kamrul\\source\\repos\\ShopManagement\\ShopManagement\\Data\\Repositories\\SaleRepository.cs",
+              "RelativeToolTip": "ShopManagement\\Data\\Repositories\\SaleRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-09T14:39:28.057Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
