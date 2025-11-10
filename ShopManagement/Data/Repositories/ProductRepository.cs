@@ -46,7 +46,6 @@ namespace ShopManagement.Data.Repositories
             if (product != null)
             {
                 product.CurrentStock = newStock;
-                product.UpdatedAt = DateTime.UtcNow;
                 Update(product);
             }
         }
