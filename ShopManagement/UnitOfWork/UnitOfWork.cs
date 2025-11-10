@@ -1,66 +1,49 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
+using ShopManagement.API.Data.Context;
+using ShopManagement.Data.Repositories;
 using ShopManagement.Interfaces;
+using ShopManagement.Models.Entities;
 
 namespace ShopManagement.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private IDbContextTransaction? _transaction;
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-            Users = new UserRepository(_context);
-            Categories = new CategoryRepository(_context);
-            Products = new ProductRepository(_context);
-            Sales = new SaleRepository(_context);
-            Customers = new CustomerRepository(_context);
-            Suppliers = new SupplierRepository(_context);
-            ProductHistories = new ProductHistoryRepository(_context);
+            Users = new GenericRepository<User>(_context);
+            Categories = new GenericRepository<Category>(_context);
+            Products = new GenericRepository<Product>(_context);
+            Sales = new GenericRepository<Sale>(_context);
+            SaleItems = new GenericRepository<SaleItem>(_context);
+            Customers = new GenericRepository<Customer>(_context);
+            Suppliers = new GenericRepository<Supplier>(_context);
+            ProductHistories = new GenericRepository<ProductHistory>(_context);
         }
 
-        public IUserRepository Users { get; private set; }
-        public ICategoryRepository Categories { get; private set; }
-        public IProductRepository Products { get; private set; }
-        public ISaleRepository Sales { get; private set; }
-        public ICustomerRepository Customers { get; private set; }
-        public ISupplierRepository Suppliers { get; private set; }
-        public IProductHistoryRepository ProductHistories { get; private set; }
+        public IGenericRepository<User> Users { get; private set; }
+        public IGenericRepository<Category> Categories { get; private set; }
+        public IGenericRepository<Product> Products { get; private set; }
+        public IGenericRepository<Sale> Sales { get; private set; }
+        public IGenericRepository<SaleItem> SaleItems { get; private set; }
+        public IGenericRepository<Customer> Customers { get; private set; }
+        public IGenericRepository<Supplier> Suppliers { get; private set; }
+        public IGenericRepository<ProductHistory> ProductHistories { get; private set; }
 
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();
         }
 
-        public async Task BeginTransactionAsync()
+        public int Complete()
         {
-            _transaction = await _context.Database.BeginTransactionAsync();
-        }
-
-        public async Task CommitTransactionAsync()
-        {
-            if (_transaction != null)
-            {
-                await _transaction.CommitAsync();
-                await _transaction.DisposeAsync();
-                _transaction = null;
-            }
-        }
-
-        public async Task RollbackTransactionAsync()
-        {
-            if (_transaction != null)
-            {
-                await _transaction.RollbackAsync();
-                await _transaction.DisposeAsync();
-                _transaction = null;
-            }
+            return _context.SaveChanges();
         }
 
         public void Dispose()
         {
-            _transaction?.Dispose();
             _context.Dispose();
         }
     }

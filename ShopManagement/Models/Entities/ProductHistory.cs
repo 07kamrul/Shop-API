@@ -3,14 +3,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopManagement.Models.Entities
 {
-    public class ProductHistory : BaseEntity
+    public class ProductHistory
     {
+        [Key]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         [Required]
         public string ProductId { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(20)]
-        public string TransactionType { get; set; } = string.Empty; // Purchase, Sale, Return, Adjustment
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Required]
+        [MaxLength(50)]
+        public string TransactionType { get; set; } = string.Empty; // Purchase/Sale/Return/Adjustment
 
         [Required]
         public int QuantityChanged { get; set; }
@@ -29,8 +35,14 @@ namespace ShopManagement.Models.Entities
 
         public string? Notes { get; set; }
 
+        [Required]
+        public string CreatedBy { get; set; } = string.Empty;
+
         // Navigation properties
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; } = null!;
+
+        [ForeignKey("CreatedBy")]
+        public virtual User User { get; set; } = null!;
     }
 }

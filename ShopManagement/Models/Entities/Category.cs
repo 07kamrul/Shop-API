@@ -8,7 +8,7 @@ namespace ShopManagement.Models.Entities
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string Name { get; set; } = string.Empty;
 
         public string? ParentCategoryId { get; set; }
@@ -17,11 +17,10 @@ namespace ShopManagement.Models.Entities
         [Column(TypeName = "decimal(5,2)")]
         public decimal? ProfitMarginTarget { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         [Required]
         public string CreatedBy { get; set; } = string.Empty;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         [ForeignKey("ParentCategoryId")]

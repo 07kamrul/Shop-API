@@ -19,7 +19,7 @@ namespace ShopManagement.Models.Entities
         public string? CustomerPhone { get; set; }
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(50)]
         public string PaymentMethod { get; set; } = "cash";
 
         [Required]
@@ -34,10 +34,10 @@ namespace ShopManagement.Models.Entities
         [Column(TypeName = "decimal(15,2)")]
         public decimal TotalProfit { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         [Required]
         public string CreatedBy { get; set; } = string.Empty;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         [ForeignKey("CustomerId")]

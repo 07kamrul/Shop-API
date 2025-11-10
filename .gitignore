@@ -6,4 +6,5 @@
 /.vs/ShopManagement
 /.vs/ShopManagement/
 /ShopManagement/bin/Debug/net8.0
-/ShopManagement/obj/project.assets.json
+/ShopManagement/obj
+/ShopManagement/obj/

@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopManagement.Models.Entities
 {
-    public class SaleItem : BaseEntity
+    public class SaleItem
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         [Required]
         public string SaleId { get; set; } = string.Empty;
 

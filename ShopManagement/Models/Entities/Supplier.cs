@@ -3,13 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopManagement.Models.Entities
 {
-    public class Supplier : BaseEntity
+    public class Supplier
     {
+        [Key]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+
         [Required]
         [MaxLength(255)]
         public string Name { get; set; } = string.Empty;
 
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string? ContactPerson { get; set; }
 
         [MaxLength(20)]
@@ -22,11 +25,12 @@ namespace ShopManagement.Models.Entities
         public string? Address { get; set; }
 
         [Column(TypeName = "decimal(15,2)")]
-        public decimal TotalPurchases { get; set; } = 0.00m;
+        public decimal TotalPurchases { get; set; } = 0;
 
         public int TotalProducts { get; set; } = 0;
 
         public DateTime LastPurchaseDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [Required]
         public string CreatedBy { get; set; } = string.Empty;
@@ -34,7 +38,6 @@ namespace ShopManagement.Models.Entities
         // Navigation properties
         [ForeignKey("CreatedBy")]
         public virtual User User { get; set; } = null!;
-
         public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

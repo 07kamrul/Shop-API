@@ -11,7 +11,7 @@ namespace ShopManagement.Models.Entities
         [MaxLength(255)]
         public string Name { get; set; } = string.Empty;
 
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string? Barcode { get; set; }
 
         [Required]
@@ -25,17 +25,18 @@ namespace ShopManagement.Models.Entities
         [Column(TypeName = "decimal(15,2)")]
         public decimal SellingPrice { get; set; }
 
-        public int CurrentStock { get; set; } = 0;
+        [Required]
+        public int CurrentStock { get; set; }
+
         public int MinStockLevel { get; set; } = 10;
 
         public string? SupplierId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
 
         [Required]
         public string CreatedBy { get; set; } = string.Empty;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         [ForeignKey("CategoryId")]

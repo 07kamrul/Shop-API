@@ -1,4 +1,5 @@
-﻿using ShopManagement.Data.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using ShopManagement.API.Data.Context;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.Entities;
 

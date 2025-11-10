@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using ShopManagement.Models.Entities;
 
-namespace ShopManagement.Data.Context
+namespace ShopManagement.API.Data.Context
 {
     public class ApplicationDbContext : DbContext
     {
@@ -27,8 +26,7 @@ namespace ShopManagement.Data.Context
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(u => u.Email).IsUnique();
-                entity.Property(u => u.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                entity.Property(u => u.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(u => u.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
             });
 
             // Category configuration
@@ -43,6 +41,8 @@ namespace ShopManagement.Data.Context
                       .WithMany(u => u.Categories)
                       .HasForeignKey(c => c.CreatedBy)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(c => c.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
             });
 
             // Product configuration
@@ -63,7 +63,9 @@ namespace ShopManagement.Data.Context
                       .HasForeignKey(p => p.CreatedBy)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasIndex(p => new { p.CreatedBy, p.IsActive });
+                entity.Property(p => p.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
+                entity.Property(p => p.IsActive).HasDefaultValue(true);
+                entity.Property(p => p.MinStockLevel).HasDefaultValue(10);
             });
 
             // Sale configuration
@@ -79,7 +81,12 @@ namespace ShopManagement.Data.Context
                       .HasForeignKey(s => s.CreatedBy)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasIndex(s => new { s.CreatedBy, s.DateTime });
+                entity.Property(s => s.DateTime).HasDefaultValueSql("UTC_TIMESTAMP()");
+                entity.Property(s => s.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
+                entity.Property(s => s.PaymentMethod).HasDefaultValue("cash");
+
+                entity.HasIndex(s => s.DateTime);
+                entity.HasIndex(s => s.CreatedBy);
             });
 
             // SaleItem configuration
@@ -103,6 +110,10 @@ namespace ShopManagement.Data.Context
                       .WithMany(u => u.Customers)
                       .HasForeignKey(c => c.CreatedBy)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(c => c.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
+                entity.Property(c => c.TotalPurchases).HasDefaultValue(0);
+                entity.Property(c => c.TotalTransactions).HasDefaultValue(0);
             });
 
             // Supplier configuration
@@ -112,36 +123,11 @@ namespace ShopManagement.Data.Context
                       .WithMany(u => u.Suppliers)
                       .HasForeignKey(s => s.CreatedBy)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Property(s => s.CreatedAt).HasDefaultValueSql("UTC_TIMESTAMP()");
+                entity.Property(s => s.TotalPurchases).HasDefaultValue(0);
+                entity.Property(s => s.TotalProducts).HasDefaultValue(0);
             });
-
-            // ProductHistory configuration
-            modelBuilder.Entity<ProductHistory>(entity =>
-            {
-                entity.HasOne(ph => ph.Product)
-                      .WithMany(p => p.ProductHistories)
-                      .HasForeignKey(ph => ph.ProductId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-        }
-
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is BaseEntity && (
-                        e.State == EntityState.Added
-                        || e.State == EntityState.Modified));
-
-            foreach (var entityEntry in entries)
-            {
-                if (entityEntry.State == EntityState.Added)
-                {
-                    ((BaseEntity)entityEntry.Entity).CreatedAt = DateTime.UtcNow;
-                }
-
-                ((BaseEntity)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
-            }
-
-            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

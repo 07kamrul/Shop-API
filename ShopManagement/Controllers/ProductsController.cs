@@ -1,126 +1,241 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;
 using System.Security.Claims;
 
 namespace ShopManagement.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductService _productService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IUnitOfWork unitOfWork)
         {
-            _productService = productService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetProducts()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var products = await _productService.GetProductsByUserIdAsync(userId);
-            return Ok(products);
+            var products = await _unitOfWork.Products.FindAsync(p => p.CreatedBy == userId && p.IsActive);
+
+            var response = products.Select(p => new ProductResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Barcode = p.Barcode,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                BuyingPrice = p.BuyingPrice,
+                SellingPrice = p.SellingPrice,
+                CurrentStock = p.CurrentStock,
+                MinStockLevel = p.MinStockLevel,
+                SupplierId = p.SupplierId,
+                SupplierName = p.Supplier?.Name,
+                CreatedAt = p.CreatedAt,
+                IsActive = p.IsActive,
+                ProfitPerUnit = p.ProfitPerUnit,
+                ProfitMargin = p.ProfitMargin,
+                IsLowStock = p.IsLowStock
+            });
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> GetProduct(string id)
+        public async Task<ActionResult<ProductResponse>> GetProduct(string id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var product = await _productService.GetProductByIdAsync(id, userId);
-            if (product == null)
+            var product = await _unitOfWork.Products.GetByIdAsync(id);
+            if (product == null || product.CreatedBy != userId)
                 return NotFound();
 
-            return Ok(product);
+            var response = new ProductResponse
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Barcode = product.Barcode,
+                CategoryId = product.CategoryId,
+                CategoryName = product.Category.Name,
+                BuyingPrice = product.BuyingPrice,
+                SellingPrice = product.SellingPrice,
+                CurrentStock = product.CurrentStock,
+                MinStockLevel = product.MinStockLevel,
+                SupplierId = product.SupplierId,
+                SupplierName = product.Supplier?.Name,
+                CreatedAt = product.CreatedAt,
+                IsActive = product.IsActive,
+                ProfitPerUnit = product.ProfitPerUnit,
+                ProfitMargin = product.ProfitMargin,
+                IsLowStock = product.IsLowStock
+            };
+
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> CreateProduct(ProductCreateRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            try
+            // Verify category exists and belongs to user
+            var category = await _unitOfWork.Categories.GetByIdAsync(request.CategoryId);
+            if (category == null || category.CreatedBy != userId)
+                return BadRequest("Invalid category.");
+
+            var product = new Product
             {
-                var product = await _productService.CreateProductAsync(request, userId);
-                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
-            }
-            catch (ArgumentException ex)
+                Name = request.Name,
+                Barcode = request.Barcode,
+                CategoryId = request.CategoryId,
+                BuyingPrice = request.BuyingPrice,
+                SellingPrice = request.SellingPrice,
+                CurrentStock = request.CurrentStock,
+                MinStockLevel = request.MinStockLevel,
+                SupplierId = request.SupplierId,
+                CreatedBy = userId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Products.AddAsync(product);
+            await _unitOfWork.CompleteAsync();
+
+            var response = new ProductResponse
             {
-                return BadRequest(ex.Message);
-            }
+                Id = product.Id,
+                Name = product.Name,
+                Barcode = product.Barcode,
+                CategoryId = product.CategoryId,
+                CategoryName = category.Name,
+                BuyingPrice = product.BuyingPrice,
+                SellingPrice = product.SellingPrice,
+                CurrentStock = product.CurrentStock,
+                MinStockLevel = product.MinStockLevel,
+                SupplierId = product.SupplierId,
+                CreatedAt = product.CreatedAt,
+                IsActive = product.IsActive,
+                ProfitPerUnit = product.ProfitPerUnit,
+                ProfitMargin = product.ProfitMargin,
+                IsLowStock = product.IsLowStock
+            };
+
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(string id, UpdateProductRequest request)
+        public async Task<ActionResult<ProductResponse>> UpdateProduct(string id, ProductCreateRequest request)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            try
-            {
-                await _productService.UpdateProductAsync(id, request, userId);
-                return NoContent();
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (KeyNotFoundException)
-            {
+            var product = await _unitOfWork.Products.GetByIdAsync(id);
+            if (product == null || product.CreatedBy != userId)
                 return NotFound();
-            }
+
+            // Verify category exists and belongs to user
+            var category = await _unitOfWork.Categories.GetByIdAsync(request.CategoryId);
+            if (category == null || category.CreatedBy != userId)
+                return BadRequest("Invalid category.");
+
+            product.Name = request.Name;
+            product.Barcode = request.Barcode;
+            product.CategoryId = request.CategoryId;
+            product.BuyingPrice = request.BuyingPrice;
+            product.SellingPrice = request.SellingPrice;
+            product.CurrentStock = request.CurrentStock;
+            product.MinStockLevel = request.MinStockLevel;
+            product.SupplierId = request.SupplierId;
+
+            _unitOfWork.Products.Update(product);
+            await _unitOfWork.CompleteAsync();
+
+            var response = new ProductResponse
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Barcode = product.Barcode,
+                CategoryId = product.CategoryId,
+                CategoryName = category.Name,
+                BuyingPrice = product.BuyingPrice,
+                SellingPrice = product.SellingPrice,
+                CurrentStock = product.CurrentStock,
+                MinStockLevel = product.MinStockLevel,
+                SupplierId = product.SupplierId,
+                CreatedAt = product.CreatedAt,
+                IsActive = product.IsActive,
+                ProfitPerUnit = product.ProfitPerUnit,
+                ProfitMargin = product.ProfitMargin,
+                IsLowStock = product.IsLowStock
+            };
+
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(string id)
+        public async Task<ActionResult> DeleteProduct(string id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            try
-            {
-                await _productService.DeleteProductAsync(id, userId);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
+            var product = await _unitOfWork.Products.GetByIdAsync(id);
+            if (product == null || product.CreatedBy != userId)
                 return NotFound();
-            }
+
+            // Soft delete
+            product.IsActive = false;
+            _unitOfWork.Products.Update(product);
+            await _unitOfWork.CompleteAsync();
+
+            return NoContent();
         }
 
         [HttpGet("low-stock")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetLowStockProducts()
+        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetLowStockProducts()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var products = await _productService.GetLowStockProductsAsync(userId);
-            return Ok(products);
-        }
+            var products = await _unitOfWork.Products.FindAsync(p =>
+                p.CreatedBy == userId && p.IsActive && p.CurrentStock <= p.MinStockLevel);
 
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts([FromQuery] string term)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+            var response = products.Select(p => new ProductResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Barcode = p.Barcode,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                BuyingPrice = p.BuyingPrice,
+                SellingPrice = p.SellingPrice,
+                CurrentStock = p.CurrentStock,
+                MinStockLevel = p.MinStockLevel,
+                SupplierId = p.SupplierId,
+                SupplierName = p.Supplier?.Name,
+                CreatedAt = p.CreatedAt,
+                IsActive = p.IsActive,
+                ProfitPerUnit = p.ProfitPerUnit,
+                ProfitMargin = p.ProfitMargin,
+                IsLowStock = p.IsLowStock
+            });
 
-            var products = await _productService.SearchProductsAsync(userId, term);
-            return Ok(products);
+            return Ok(response);
         }
     }
 }
