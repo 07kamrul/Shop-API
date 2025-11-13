@@ -78,43 +78,38 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// CORS - Updated for Flutter development
+// CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()  // Allow all origins for development
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
-    });
-
-    // Alternative: Specific origins for production
-    options.AddPolicy("AllowFlutterApp", policy =>
-    {
-        policy.WithOrigins(
-                "http://localhost:3000",
-                "http://localhost:5000",
-                "http://localhost:53589",
-                "http://10.0.2.2:7097",    // Android emulator
-                "http://127.0.0.1:7097",   // Localhost
-                "http://172.16.7.95:7097", // Your local IP
-                "http://localhost",         // Generic localhost
-                "http://0.0.0.0:7097"      // All interfaces
-              )
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
     });
 });
 
 // Add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
-// Configure Kestrel to listen on all interfaces
+// Configure Kestrel - Support both HTTP and HTTPS
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.ListenAnyIP(7097); // Listen on all IP addresses
+    // HTTP on port 7097
+    serverOptions.ListenAnyIP(7097);
+
+    // HTTPS on port 7098 (optional for development)
+    serverOptions.ListenAnyIP(7098, listenOptions =>
+    {
+        listenOptions.UseHttps(); // Uses development certificate
+    });
+
+    // Localhost HTTP
+    serverOptions.Listen(System.Net.IPAddress.Loopback, 7097);
 });
+
+// Disable HTTPS redirection in Development
+// builder.Services.AddHttpsRedirection(options => { options.HttpsPort = null; });
 
 var app = builder.Build();
 
@@ -143,14 +138,13 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// IMPORTANT: Do NOT use HTTPS redirection for development
+// app.UseHttpsRedirection(); // COMMENTED OUT
+
 app.UseRouting();
-
-// Use CORS - Place after UseRouting() and before UseAuthentication()
-app.UseCors("AllowAll"); // Use "AllowFlutterApp" for specific origins
-
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 // Database Migration
@@ -168,12 +162,43 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Add health check endpoint
+// Health check endpoints
 app.MapGet("/", () => "Shop Management API is running!");
-app.MapGet("/health", () => "API is healthy!");
+app.MapGet("/health", () => Results.Ok(new
+{
+    status = "healthy",
+    timestamp = DateTime.UtcNow,
+    protocol = "HTTP"
+}));
 
-Console.WriteLine($"Application starting...");
-Console.WriteLine($"API URL: http://0.0.0.0:7097");
-Console.WriteLine($"Swagger URL: http://localhost:7097/swagger");
+Console.WriteLine("========================================");
+Console.WriteLine("Shop Management API Started");
+Console.WriteLine("========================================");
+Console.WriteLine($"HTTP URL: http://localhost:7097");
+Console.WriteLine($"Network URL: http://{GetLocalIPAddress()}:7097");
+Console.WriteLine($"Android Emulator: http://10.0.2.2:7097");
+Console.WriteLine($"Swagger: http://localhost:7097/swagger");
+Console.WriteLine("========================================");
 
 app.Run();
+
+// Helper method to get local IP
+static string GetLocalIPAddress()
+{
+    try
+    {
+        var host = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName());
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                return ip.ToString();
+            }
+        }
+        return "localhost";
+    }
+    catch
+    {
+        return "localhost";
+    }
+}
