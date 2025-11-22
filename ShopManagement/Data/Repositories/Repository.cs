@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using ShopManagement.API.Data.Context;
 using ShopManagement.Interfaces;
 
@@ -44,5 +45,22 @@ namespace ShopManagement.Data.Repositories
         {
             return await _dbSet.FindAsync(id) != null;
         }
-    }
+
+        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(Expression<Func<T, bool>> filter = null, params Expression<Func<T, object>>[] includes)
+        {
+
+            IQueryable<T> query = _context.Set<T>();
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            return await query.ToListAsync();        }
+        }
 }

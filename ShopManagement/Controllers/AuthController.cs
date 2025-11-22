@@ -26,11 +26,11 @@ namespace ShopManagement.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while registering user.");
+                return StatusCode(500, new { message = "An error occurred while registering user." });
             }
         }
 

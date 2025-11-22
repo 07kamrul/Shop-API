@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;
@@ -28,25 +29,37 @@ namespace ShopManagement.Controllers
 
             var products = await _unitOfWork.Products.FindAsync(p => p.CreatedBy == userId && p.IsActive);
 
-            var response = products.Select(p => new ProductResponse
+            // Manually load Category and Supplier for each product
+            var response = new List<ProductResponse>();
+            foreach (var p in products)
             {
-                Id = p.Id,
-                Name = p.Name,
-                Barcode = p.Barcode,
-                CategoryId = p.CategoryId,
-                CategoryName = p.Category.Name,
-                BuyingPrice = p.BuyingPrice,
-                SellingPrice = p.SellingPrice,
-                CurrentStock = p.CurrentStock,
-                MinStockLevel = p.MinStockLevel,
-                SupplierId = p.SupplierId,
-                SupplierName = p.Supplier?.Name,
-                CreatedAt = p.CreatedAt,
-                IsActive = p.IsActive,
-                ProfitPerUnit = p.ProfitPerUnit,
-                ProfitMargin = p.ProfitMargin,
-                IsLowStock = p.IsLowStock
-            });
+                var category = p.Category ?? await _unitOfWork.Categories.GetByIdAsync(p.CategoryId);
+                var supplier = p.Supplier;
+                if (supplier == null && p.SupplierId != null)
+                {
+                    supplier = await _unitOfWork.Suppliers.GetByIdAsync(p.SupplierId);
+                }
+
+                response.Add(new ProductResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Barcode = p.Barcode,
+                    CategoryId = p.CategoryId,
+                    CategoryName = category?.Name ?? "Unknown",
+                    BuyingPrice = p.BuyingPrice,
+                    SellingPrice = p.SellingPrice,
+                    CurrentStock = p.CurrentStock,
+                    MinStockLevel = p.MinStockLevel,
+                    SupplierId = p.SupplierId,
+                    SupplierName = supplier?.Name,
+                    CreatedAt = p.CreatedAt,
+                    IsActive = p.IsActive,
+                    ProfitPerUnit = p.ProfitPerUnit,
+                    ProfitMargin = p.ProfitMargin,
+                    IsLowStock = p.IsLowStock
+                });
+            }
 
             return Ok(response);
         }
@@ -62,19 +75,27 @@ namespace ShopManagement.Controllers
             if (product == null || product.CreatedBy != userId)
                 return NotFound();
 
+            // Load related entities
+            var category = product.Category ?? await _unitOfWork.Categories.GetByIdAsync(product.CategoryId);
+            var supplier = product.Supplier;
+            if (supplier == null && product.SupplierId != null)
+            {
+                supplier = await _unitOfWork.Suppliers.GetByIdAsync(product.SupplierId);
+            }
+
             var response = new ProductResponse
             {
                 Id = product.Id,
                 Name = product.Name,
                 Barcode = product.Barcode,
                 CategoryId = product.CategoryId,
-                CategoryName = product.Category.Name,
+                CategoryName = category?.Name ?? "Unknown",
                 BuyingPrice = product.BuyingPrice,
                 SellingPrice = product.SellingPrice,
                 CurrentStock = product.CurrentStock,
                 MinStockLevel = product.MinStockLevel,
                 SupplierId = product.SupplierId,
-                SupplierName = product.Supplier?.Name,
+                SupplierName = supplier?.Name,
                 CreatedAt = product.CreatedAt,
                 IsActive = product.IsActive,
                 ProfitPerUnit = product.ProfitPerUnit,
@@ -215,25 +236,37 @@ namespace ShopManagement.Controllers
             var products = await _unitOfWork.Products.FindAsync(p =>
                 p.CreatedBy == userId && p.IsActive && p.CurrentStock <= p.MinStockLevel);
 
-            var response = products.Select(p => new ProductResponse
+            // Manually load Category and Supplier for each product
+            var response = new List<ProductResponse>();
+            foreach (var p in products)
             {
-                Id = p.Id,
-                Name = p.Name,
-                Barcode = p.Barcode,
-                CategoryId = p.CategoryId,
-                CategoryName = p.Category.Name,
-                BuyingPrice = p.BuyingPrice,
-                SellingPrice = p.SellingPrice,
-                CurrentStock = p.CurrentStock,
-                MinStockLevel = p.MinStockLevel,
-                SupplierId = p.SupplierId,
-                SupplierName = p.Supplier?.Name,
-                CreatedAt = p.CreatedAt,
-                IsActive = p.IsActive,
-                ProfitPerUnit = p.ProfitPerUnit,
-                ProfitMargin = p.ProfitMargin,
-                IsLowStock = p.IsLowStock
-            });
+                var category = p.Category ?? await _unitOfWork.Categories.GetByIdAsync(p.CategoryId);
+                var supplier = p.Supplier;
+                if (supplier == null && p.SupplierId != null)
+                {
+                    supplier = await _unitOfWork.Suppliers.GetByIdAsync(p.SupplierId);
+                }
+
+                response.Add(new ProductResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Barcode = p.Barcode,
+                    CategoryId = p.CategoryId,
+                    CategoryName = category?.Name ?? "Unknown",
+                    BuyingPrice = p.BuyingPrice,
+                    SellingPrice = p.SellingPrice,
+                    CurrentStock = p.CurrentStock,
+                    MinStockLevel = p.MinStockLevel,
+                    SupplierId = p.SupplierId,
+                    SupplierName = supplier?.Name,
+                    CreatedAt = p.CreatedAt,
+                    IsActive = p.IsActive,
+                    ProfitPerUnit = p.ProfitPerUnit,
+                    ProfitMargin = p.ProfitMargin,
+                    IsLowStock = p.IsLowStock
+                });
+            }
 
             return Ok(response);
         }

@@ -1,4 +1,6 @@
-﻿namespace ShopManagement.Interfaces
+﻿using System.Linq.Expressions;
+
+namespace ShopManagement.Interfaces
 {
     public interface IRepository<T> where T : class
     {
@@ -8,5 +10,9 @@
         void Update(T entity);
         void Delete(T entity);
         Task<bool> ExistsAsync(string id);
+    
+    Task<IEnumerable<T>> GetAllWithIncludesAsync(
+        Expression<Func<T, bool>> filter = null,
+        params Expression<Func<T, object>>[] includes);
     }
 }
