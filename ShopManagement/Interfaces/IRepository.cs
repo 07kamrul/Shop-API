@@ -11,7 +11,7 @@ namespace ShopManagement.Interfaces
         void Delete(T entity);
         Task<bool> ExistsAsync(string id);
     
-    Task<IEnumerable<T>> GetAllWithIncludesAsync(
+        Task<IEnumerable<T>> GetAllWithIncludesAsync(
         Expression<Func<T, bool>> filter = null,
         params Expression<Func<T, object>>[] includes);
     }
