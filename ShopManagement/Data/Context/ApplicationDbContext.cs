@@ -128,6 +128,15 @@ namespace ShopManagement.API.Data.Context
                 entity.Property(s => s.TotalPurchases).HasDefaultValue(0);
                 entity.Property(s => s.TotalProducts).HasDefaultValue(0);
             });
+
+            // Option 1: Set table name explicitly
+            modelBuilder.Entity<ProductHistory>().ToTable("ProductHistories");
+
+            // Option 2: Use singular table names for all entities
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                modelBuilder.Entity(entityType.ClrType).ToTable(entityType.ClrType.Name);
+            }
         }
     }
 }
