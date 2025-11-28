@@ -1,4 +1,8 @@
 // Services/IInventoryService.cs
+using ShopManagement.Interfaces;
+using ShopManagement.Models.DTOs.Inventory;
+using ShopManagement.Models.Entities;
+
 namespace ShopManagement.Services
 {
     public interface IInventoryService
@@ -53,11 +57,10 @@ namespace ShopManagement.Services
 
         public async Task<List<StockAlertDto>> GetStockAlertsAsync(string userId)
         {
-            var products = await _unitOfWork.Products
-                .FindAsync(
-                    p => p.CreatedBy == userId && p.IsActive && (p.CurrentStock <= p.MinStockLevel),
-                    include: p => p.Category
-                );
+            var products = await _unitOfWork.Products.FindAsync(
+                p => p.CreatedBy == userId && p.IsActive && (p.CurrentStock <= p.MinStockLevel),
+                p => p.Category  // Include navigation property
+            );
 
             var alerts = products.Select(p => new StockAlertDto(
                 ProductId: p.Id,
@@ -76,11 +79,15 @@ namespace ShopManagement.Services
 
         public async Task<List<CategoryInventoryDto>> GetCategoryInventoryAsync(string userId)
         {
-            var categories = await _unitOfWork.Categories
-                .FindAsync(c => c.CreatedBy == userId);
+            var categories = await _unitOfWork.Categories.FindAsync(
+                c => c.CreatedBy == userId
+            );
 
-            var products = await _unitOfWork.Products
-                .FindAsync(p => p.CreatedBy == userId && p.IsActive, include: p => p.Category);
+            // Include Category navigation property
+            var products = await _unitOfWork.Products.FindAsync(
+                p => p.CreatedBy == userId && p.IsActive,
+                p => p.Category  // Include navigation property
+            );
 
             var categoryMap = categories.ToDictionary(
                 c => c.Id,

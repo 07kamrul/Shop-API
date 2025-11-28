@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShopManagement.Models.DTOs.Inventory;
+using ShopManagement.Models.Entities;
 using ShopManagement.Services;
 using System.Security.Claims;
 

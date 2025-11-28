@@ -7,7 +7,7 @@ namespace ShopManagement.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected readonly ApplicationDbContext _context;
+       protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)
@@ -26,9 +26,27 @@ namespace ShopManagement.Data.Repositories
             return await _dbSet.ToListAsync();
         }
 
+        // Original FindAsync without includes
         public virtual async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbSet.Where(expression).ToListAsync();
+        }
+
+        // New FindAsync with includes support
+        public virtual async Task<IEnumerable<T>> FindAsync(
+            Expression<Func<T, bool>> expression,
+            params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            // Apply includes
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            // Apply filter
+            return await query.Where(expression).ToListAsync();
         }
 
         public virtual async Task<T> AddAsync(T entity)
