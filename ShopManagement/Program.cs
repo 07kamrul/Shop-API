@@ -54,6 +54,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
