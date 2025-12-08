@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;
 using ShopManagement.Services;
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ShopManagement.Controllers
 {

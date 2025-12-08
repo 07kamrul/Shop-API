@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopManagement.Models.Entities
@@ -19,7 +20,7 @@ namespace ShopManagement.Models.Entities
 
         [Required]
         public int Quantity { get; set; }
-
+        public decimal BuyingPriceAtSale { get; set; }
         [Required]
         [Column(TypeName = "decimal(15,2)")]
         public decimal UnitBuyingPrice { get; set; }

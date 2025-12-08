@@ -1,7 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShopManagement.API.Data.Context;
 using ShopManagement.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ShopManagement.Data.Repositories
 {

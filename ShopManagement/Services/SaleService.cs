@@ -1,4 +1,8 @@
-﻿using ShopManagement.API.Data.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ShopManagement.API.Data.Context;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;

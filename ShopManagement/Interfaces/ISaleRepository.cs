@@ -1,5 +1,7 @@
 ﻿using ShopManagement.Models.Entities;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 namespace ShopManagement.Interfaces
 {
     public interface ISaleRepository : IRepository<Sale>

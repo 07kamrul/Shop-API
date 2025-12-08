@@ -1,11 +1,15 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ShopManagement.Services
 {
@@ -102,9 +106,9 @@ namespace ShopManagement.Services
         public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
         {
             var user = (await _unitOfWork.Users.FindAsync(u => u.RefreshToken == refreshToken)).FirstOrDefault();
-            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (user == null || user.RefreshTokenExpiryTime.Value <= DateTime.UtcNow){
                 throw new SecurityTokenException("Invalid refresh token.");
-
+            }
             // Generate new tokens
             var newToken = GenerateJwtToken(user);
             var newRefreshToken = GenerateRefreshToken();

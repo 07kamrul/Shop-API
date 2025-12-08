@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 using ShopManagement.API.Data.Context;
 using ShopManagement.Data.Repositories;
 using ShopManagement.Interfaces;

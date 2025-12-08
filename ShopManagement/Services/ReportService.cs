@@ -1,4 +1,8 @@
-﻿using ShopManagement.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 
 namespace ShopManagement.Services

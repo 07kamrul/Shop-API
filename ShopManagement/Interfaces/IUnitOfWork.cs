@@ -1,5 +1,6 @@
 ﻿using ShopManagement.Models.Entities;
-
+using System;
+using System.Threading.Tasks;
 namespace ShopManagement.Interfaces
 {
     public interface IUnitOfWork : IDisposable

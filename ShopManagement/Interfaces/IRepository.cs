@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 namespace ShopManagement.Interfaces
 {
     public interface IRepository<T> where T : class

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ShopManagement.API.Data.Context;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.Entities;
@@ -11,15 +12,15 @@ namespace ShopManagement.Data.Repositories
         {
         }
 
-        public async Task<User?> GetByEmailAsync(string email)
+        public  Task<User?> GetByEmailAsync(string email)
         {
-            return await _context.Users
+            return  _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<bool> EmailExistsAsync(string email)
+        public  Task<bool> EmailExistsAsync(string email)
         {
-            return await _context.Users
+            return  _context.Users
                 .AnyAsync(u => u.Email == email);
         }
     }

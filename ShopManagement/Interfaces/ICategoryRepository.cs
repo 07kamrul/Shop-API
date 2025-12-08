@@ -1,4 +1,6 @@
-﻿using ShopManagement.Models.Entities;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using ShopManagement.Models.Entities;
 
 namespace ShopManagement.Interfaces
 {
