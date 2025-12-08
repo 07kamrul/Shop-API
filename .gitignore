@@ -12,3 +12,13 @@
 /.gitignore
 /.vs/ShopManagement/v17/DocumentLayout.json
 /.vs/ShopManagement/v17/.suo
+/ShopManagement/obj/ShopManagement.csproj.nuget.dgspec.json
+/ShopManagement/obj/project.nuget.cache
+/ShopManagement/obj/Debug/net8.0/ShopManagement.AssemblyInfo.cs
+/ShopManagement/obj/Debug/net8.0/ShopManagement.AssemblyInfoInputs.cache
+/ShopManagement/obj/Debug/net8.0/ShopManagement.assets.cache
+/ShopManagement/obj/Debug/net8.0/ShopManagement.csproj.AssemblyReference.cache
+/ShopManagement/obj/Debug/net8.0/ShopManagement.GeneratedMSBuildEditorConfig.editorconfig
+/ShopManagement/obj/Debug/net8.0/ShopManagement.GlobalUsings.g.cs
+/ShopManagement/obj/ShopManagement.csproj.nuget.g.props
+/ShopManagement/obj/ShopManagement.csproj.nuget.g.targets
