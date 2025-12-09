@@ -54,7 +54,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
+        mySqlOptions => mySqlOptions.EnableStringComparisonTranslations()));
 
 // DI
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

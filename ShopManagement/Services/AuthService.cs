@@ -1,15 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using ShopManagement.Interfaces;
 using ShopManagement.Models.DTOs;
 using ShopManagement.Models.Entities;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ShopManagement.Services
 {
@@ -77,30 +73,63 @@ namespace ShopManagement.Services
 
         public async Task<AuthResponse> LoginAsync(LoginRequest request)
         {
-            var user = (await _unitOfWork.Users.FindAsync(u => u.Email == request.Email)).FirstOrDefault();
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-                throw new UnauthorizedAccessException("Invalid email or password.");
-
-            // Generate tokens
-            var token = GenerateJwtToken(user);
-            var refreshToken = GenerateRefreshToken();
-
-            // Save refresh token
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _unitOfWork.CompleteAsync();
-
-            return new AuthResponse
+            // Validate input
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
-                ShopName = user.ShopName,
-                Phone = user.Phone,
-                Token = token,
-                RefreshToken = refreshToken,
-                TokenExpiry = DateTime.UtcNow.AddHours(1)
-            };
+                throw new ArgumentException("Email and password are required.");
+            }
+
+            var emailToFind = request.Email.Trim().ToLower();
+
+            try
+            {
+
+                var user = (await _unitOfWork.Users.FindAsync(u => 
+                    u.Email != null && u.Email.Trim().ToLower() == emailToFind))
+                    .FirstOrDefault();
+
+                if (user == null)
+                {
+                    throw new UnauthorizedAccessException("Invalid email or password.");
+                }
+
+                if (!VerifyPassword(request.Password, user.PasswordHash))
+                {
+                    throw new UnauthorizedAccessException("Invalid email or password.");
+                }
+
+                if (user.IsActive == 0)
+                {
+                    throw new UnauthorizedAccessException("Account is deactivated.");
+                }
+
+                // Generate tokens
+                var token = GenerateJwtToken(user);
+                var refreshToken = GenerateRefreshToken();
+
+                // Save refresh token
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+                user.LastLoginAt = DateTime.UtcNow; // Optional: track last login
+                
+                await _unitOfWork.CompleteAsync();
+
+                return new AuthResponse
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Name = user.Name,
+                    ShopName = user.ShopName,
+                    Phone = user.Phone,
+                    Token = token,
+                    RefreshToken = refreshToken,
+                    TokenExpiry = DateTime.UtcNow.AddHours(1)
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Login failed: {ex.Message}");
+            }
         }
 
         public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
@@ -141,6 +170,18 @@ namespace ShopManagement.Services
             await _unitOfWork.CompleteAsync();
 
             return true;
+        }
+
+        private bool VerifyPassword(string password, string passwordHash)
+        {
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private string GenerateJwtToken(User user)

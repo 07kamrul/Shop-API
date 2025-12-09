@@ -38,7 +38,7 @@ namespace ShopManagement.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while generating the report.");
+                return StatusCode(500, ex.Message);
             }
         }
 

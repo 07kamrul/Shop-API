@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShopManagement.Models.Entities
 {
@@ -20,6 +21,8 @@ namespace ShopManagement.Models.Entities
 
         [MaxLength(20)]
         public string? Phone { get; set; }
+        public int IsActive { get; set; }
+        public DateTime? LastLoginAt { get; set; }
 
         [Required]
         [MaxLength(255)]
